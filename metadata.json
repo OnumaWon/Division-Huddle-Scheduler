@@ -1,0 +1,5 @@
+{
+  "name": "Division Huddle Scheduler",
+  "description": "A specialized scheduling application for hospital division huddles, managing leads and co-leads with specific priority rules and holiday exclusions for 2026-2027.",
+  "requestFramePermissions": []
+}
