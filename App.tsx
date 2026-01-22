@@ -12,19 +12,22 @@ import {
   Building2,
   AlertCircle,
   ArrowLeftRight,
-  RotateCcw,
   CheckCircle2,
-  CalendarPlus,
-  PlusCircle,
-  X,
-  Trash2,
   UserCheck,
-  ChevronRight
+  Lock,
+  Unlock,
+  KeyRound,
+  ShieldAlert,
+  ArrowRight,
+  ShieldCheck
 } from 'lucide-react';
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewType>(ViewType.DASHBOARD);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [showLoginError, setShowLoginError] = useState(false);
   
   // Initialize schedule in state to allow modifications
   const [currentSchedule, setCurrentSchedule] = useState<WeeklySchedule[]>([]);
@@ -33,11 +36,6 @@ const App: React.FC = () => {
   const [weekAIndex, setWeekAIndex] = useState<number>(0);
   const [weekBIndex, setWeekBIndex] = useState<number>(1);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  // Holiday state
-  const [selectedWeekIndex, setSelectedWeekIndex] = useState<number | null>(null);
-  const [newHolidayName, setNewHolidayName] = useState('');
-  const [newHolidayDate, setNewHolidayDate] = useState('');
 
   useEffect(() => {
     setCurrentSchedule(generateSchedule());
@@ -97,6 +95,7 @@ const App: React.FC = () => {
   };
 
   const handleSwap = (type: 'LEAD' | 'COLEAD' | 'BOTH') => {
+    if (!isAdmin) return;
     const newSchedule = [...currentSchedule];
     const weekA = { ...newSchedule[weekAIndex] };
     const weekB = { ...newSchedule[weekBIndex] };
@@ -117,57 +116,19 @@ const App: React.FC = () => {
     newSchedule[weekBIndex] = weekB;
     setCurrentSchedule(newSchedule);
     
-    setSuccessMessage(`Successfully swapped ${type.toLowerCase()} assignments!`);
+    setSuccessMessage(`สลับตารางเวรเรียบร้อยแล้ว (${type === 'BOTH' ? 'ทั้งหมด' : type})`);
     setTimeout(() => setSuccessMessage(null), 3000);
   };
 
-  const handleAddHoliday = (e: React.FormEvent) => {
+  const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedWeekIndex === null || !newHolidayName || !newHolidayDate) return;
-
-    const targetWeek = currentSchedule[selectedWeekIndex];
-    
-    if (newHolidayDate < targetWeek.startDate || newHolidayDate > targetWeek.endDate) {
-      alert(`Error: Holiday date (${newHolidayDate}) must be between ${targetWeek.startDate} and ${targetWeek.endDate}`);
-      return;
-    }
-
-    const newSchedule = [...currentSchedule];
-    const weekUpdate = { ...newSchedule[selectedWeekIndex] };
-    
-    const newHoliday: Holiday = { name: newHolidayName, date: newHolidayDate };
-    weekUpdate.holidaysInWeek = [...weekUpdate.holidaysInWeek, newHoliday];
-    weekUpdate.workingDays = weekUpdate.workingDays.filter(d => d !== newHolidayDate);
-
-    newSchedule[selectedWeekIndex] = weekUpdate;
-    setCurrentSchedule(newSchedule);
-
-    setNewHolidayName('');
-    setNewHolidayDate('');
-    setSelectedWeekIndex(null);
-    setSuccessMessage(`Added holiday: ${newHolidayName}`);
-    setTimeout(() => setSuccessMessage(null), 3000);
-  };
-
-  const removeHoliday = (weekIdx: number, holidayIdx: number) => {
-    const newSchedule = [...currentSchedule];
-    const weekUpdate = { ...newSchedule[weekIdx] };
-    const removed = weekUpdate.holidaysInWeek[holidayIdx];
-    
-    weekUpdate.holidaysInWeek = weekUpdate.holidaysInWeek.filter((_, i) => i !== holidayIdx);
-    
-    const day = new Date(removed.date).getDay();
-    if (day >= 1 && day <= 5) {
-      weekUpdate.workingDays = [...weekUpdate.workingDays, removed.date].sort();
-    }
-
-    newSchedule[weekIdx] = weekUpdate;
-    setCurrentSchedule(newSchedule);
-  };
-
-  const resetSchedule = () => {
-    if (confirm("Are you sure you want to reset all changes? This removes all swaps and manual holidays.")) {
-      setCurrentSchedule(generateSchedule());
+    if (passwordInput === '1054') {
+      setIsAdmin(true);
+      setShowLoginError(false);
+      setPasswordInput('');
+    } else {
+      setShowLoginError(true);
+      setTimeout(() => setShowLoginError(false), 3000);
     }
   };
 
@@ -217,24 +178,21 @@ const App: React.FC = () => {
               <ArrowLeftRight size={20} />
               <span className="text-sm">Manage Shifts</span>
             </button>
-            <button 
-              onClick={() => setView(ViewType.HOLIDAYS)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${view === ViewType.HOLIDAYS ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-slate-600 hover:bg-slate-100'}`}
-            >
-              <CalendarPlus size={20} />
-              <span className="text-sm">Manage Holidays</span>
-            </button>
           </nav>
         </div>
         
-        <div className="mt-auto p-6 border-t border-slate-100 space-y-2">
-          <button 
-            onClick={resetSchedule}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-xl transition-all text-xs font-medium"
-          >
-            <RotateCcw size={16} />
-            <span>Reset Schedule</span>
-          </button>
+        <div className="mt-auto p-6 border-t border-slate-100 space-y-4">
+          {isAdmin ? (
+            <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-bold">
+              <ShieldCheck size={14} />
+              <span>Admin Mode Active</span>
+            </div>
+          ) : (
+             <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 text-slate-500 rounded-lg text-[10px] font-bold">
+              <Lock size={14} />
+              <span>Read Only Mode</span>
+            </div>
+          )}
           <button 
             onClick={handleExportCSV}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all text-xs font-medium"
@@ -255,24 +213,43 @@ const App: React.FC = () => {
               {view === ViewType.CALENDAR && "Calendar View"}
               {view === ViewType.LIST && "All Assignments"}
               {view === ViewType.SWAP && "Manage & Swap Shifts"}
-              {view === ViewType.HOLIDAYS && "Holiday Management"}
             </h2>
             <p className="text-slate-500 text-sm">Bangkok Hospital Division Huddle Schedule</p>
           </div>
           
-          {view !== ViewType.SWAP && view !== ViewType.HOLIDAYS && (
-            <div className="relative w-full md:w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <input 
-                type="text" 
-                placeholder="Search name or department..." 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
-              />
-            </div>
-          )}
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            {view !== ViewType.SWAP && (
+              <div className="relative w-full md:w-72">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <input 
+                  type="text" 
+                  placeholder="Search name or department..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
+                />
+              </div>
+            )}
+            {isAdmin && (
+              <button 
+                onClick={() => setIsAdmin(false)}
+                className="px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-red-100"
+              >
+                Logout Admin
+              </button>
+            )}
+          </div>
         </header>
+
+        {/* Admin Restriction Notice */}
+        {view === ViewType.SWAP && (
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-3 text-amber-800">
+            <ShieldAlert size={20} className="shrink-0" />
+            <p className="text-sm font-semibold">
+              หมายเหตุ: การแก้ไขตารางเวรอนุญาตให้เฉพาะ Admin เท่านั้น
+            </p>
+          </div>
+        )}
 
         {successMessage && (
           <div className="fixed bottom-8 right-8 z-50 animate-in slide-in-from-right-10 fade-in duration-300">
@@ -354,112 +331,50 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {view === ViewType.HOLIDAYS && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="bg-amber-50 border border-amber-100 p-6 rounded-3xl flex items-start gap-4">
-              <div className="bg-amber-500 p-2 rounded-lg text-white">
-                <CalendarPlus size={20} />
+        {view === ViewType.SWAP && !isAdmin && (
+          <div className="max-w-md mx-auto w-full py-12 animate-in zoom-in-95 fade-in duration-300">
+            <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-xl text-center space-y-6">
+              <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto">
+                <KeyRound size={40} />
               </div>
               <div>
-                <h3 className="font-bold text-amber-900 text-sm">Manage Custom Holidays</h3>
-                <p className="text-xs text-amber-700 mt-1">Manual entries will exclude huddles on those specific days.</p>
+                <h3 className="text-xl font-bold text-slate-900">Admin Authentication</h3>
+                <p className="text-slate-500 text-sm mt-2">
+                  Please enter the admin password to access shift management tools.
+                </p>
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-1">
-                <form onSubmit={handleAddHoliday} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-                  <h4 className="font-bold text-slate-900 text-sm mb-2">Add Holiday</h4>
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Target Week</label>
-                    <select 
-                      value={selectedWeekIndex ?? ''}
-                      onChange={(e) => setSelectedWeekIndex(e.target.value ? parseInt(e.target.value) : null)}
-                      className="w-full p-2 border border-slate-200 rounded-lg text-sm"
-                      required
-                    >
-                      <option value="">Select a week...</option>
-                      {currentSchedule.map((w, idx) => (
-                        <option key={idx} value={idx}>Week {w.weekNumber} ({w.startDate} — {w.endDate})</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Holiday Name</label>
-                    <input 
-                      type="text" 
-                      value={newHolidayName}
-                      onChange={(e) => setNewHolidayName(e.target.value)}
-                      placeholder="e.g. Special Event"
-                      className="w-full p-2 border border-slate-200 rounded-lg text-sm"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Date</label>
-                    <input 
-                      type="date" 
-                      value={newHolidayDate}
-                      onChange={(e) => setNewHolidayDate(e.target.value)}
-                      className="w-full p-2 border border-slate-200 rounded-lg text-sm"
-                      required
-                    />
-                  </div>
-                  <button 
-                    type="submit"
-                    className="w-full bg-slate-900 text-white p-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2"
-                  >
-                    <PlusCircle size={16} />
-                    Add to Schedule
-                  </button>
-                </form>
-              </div>
-
-              <div className="lg:col-span-2">
-                <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                  <div className="max-h-[600px] overflow-y-auto">
-                    <table className="w-full text-left">
-                      <thead className="bg-slate-50 sticky top-0">
-                        <tr className="border-b border-slate-200">
-                          <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase">Week</th>
-                          <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase">Holiday List</th>
-                          <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {currentSchedule.filter(w => w.holidaysInWeek.length > 0).map((w, wIdx) => {
-                          const originalIdx = currentSchedule.findIndex(orig => orig.weekNumber === w.weekNumber);
-                          return (
-                            <tr key={w.weekNumber}>
-                              <td className="px-6 py-4 text-sm font-bold text-slate-900">W{w.weekNumber}</td>
-                              <td className="px-6 py-4">
-                                <div className="flex flex-wrap gap-2">
-                                  {w.holidaysInWeek.map((h, hIdx) => (
-                                    <span key={hIdx} className="inline-flex items-center gap-2 px-2 py-1 bg-amber-50 border border-amber-100 text-amber-700 text-[10px] font-bold rounded-lg">
-                                      {h.name} ({h.date})
-                                      <button onClick={() => removeHoliday(originalIdx, hIdx)} className="hover:text-amber-900">
-                                        <X size={12} />
-                                      </button>
-                                    </span>
-                                  ))}
-                                </div>
-                              </td>
-                              <td className="px-6 py-4 text-right">
-                                <span className="text-[10px] text-slate-400 font-medium">{w.workingDays.length} Working Days Left</span>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+              
+              <form onSubmit={handleAdminLogin} className="space-y-4">
+                <div className="space-y-2 text-left">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase ml-1">Password</label>
+                  <input 
+                    type="password" 
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
+                    placeholder="Enter password..."
+                    className={`w-full px-5 py-4 bg-slate-50 border ${showLoginError ? 'border-red-300 ring-4 ring-red-50' : 'border-slate-200'} rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-50 transition-all`}
+                  />
+                  {showLoginError && (
+                    <p className="text-xs font-semibold text-red-500 ml-1">Incorrect password. Please try again.</p>
+                  )}
                 </div>
-              </div>
+                <button 
+                  type="submit"
+                  className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-2 group"
+                >
+                  <span>Authenticate</span>
+                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+              </form>
+              
+              <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest pt-4">
+                Restricted Access
+              </p>
             </div>
           </div>
         )}
 
-        {view === ViewType.SWAP && (
+        {view === ViewType.SWAP && isAdmin && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Selector A */}
