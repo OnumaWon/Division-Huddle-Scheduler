@@ -1,4 +1,3 @@
-
 import { Employee, Holiday } from './types';
 
 // Managers (Lead Team) - General Pool
@@ -19,8 +18,8 @@ export const GENERAL_MANAGERS: Employee[] = [
   { name: "ศรีสุดา จิตต์วิรัช", position: "Deputy Account & Finance Mgr.", department: "Accounting and Finance" },
   { name: "ศิวรักษ์ เพ็ชรเพ็ง", position: "Deputy Manager", department: "Hospital Affairs" },
   { name: "ธนิดา ไกรเทพ", position: "IPUs 2 Manager", department: "IPUs 2" },
-  { name: "โกศล บ่อทอง", position: "Deputy Manager", department: "Marketing Division" },
-  { name: "นิลุบล อำนวยผล", position: "UM Manager", department: "Utilization Management" },
+  { name: "นิลุบล อำนวยผล", position: "UM Manager", department: "Utilization Management" }, // Swapped from index 17 (W18) to index 16 (W17)
+  { name: "โกศล บ่อทอง", position: "Deputy Manager", department: "Marketing Division" }, // Swapped from index 16 (W17) to index 17 (W18)
   { name: "ศิริศักดิ์ ใหญ่สูงเนิน", position: "Medical Informatics Development Manager", department: "Medical Informatics Development" },
   { name: "เศรษฐพัส ณ ถลาง", position: "Digital Marketing Manager", department: "Digital Marketing" },
   { name: "นิติพงศ์ รักมาก", position: "SHE Manager", department: "Safety Occupational Health&Env" },
@@ -58,28 +57,28 @@ export const PRIORITY_HODS: Employee[] = [
   { name: "กัญช์ เกสรสุคนธ์", position: "Mental Health Clinic HOD", department: "Mental Health Clinic" },
   { name: "วีรวรรณ รัตนพันธุ์", position: "Hemodialysis HOD", department: "Hemodialysis" },
   { name: "กาญจนา รัศมีอร่ามวงศ์", position: "PR & Event Marketing HOD", department: "Event Marketing" },
-  { name: "พงศ์วรัท แซ่เจี่ย", position: "Customer Services HOD", department: "Customer Services" },
+  { name: "รัฐกร คงสมกัน", position: "Physical Therapy HOD", department: "Physical Therapy" }, // Swapped from index 22 (W23) to index 13 (W14)
   { name: "สินีนาฎ จำรัสกาญจน์", position: "IPD Pharmacy HOD", department: "IPD Pharmacy" },
-  { name: "พรศิริ ลิ่มวัฒนวงศ์", position: "IC HOD", department: "Infection Control" },
+  { name: "ไตรภพ คำวิเศษณ์", position: "Facility Management HOD", department: "Facility Management" }, // Swapped from index 19 (W20) to index 15 (W16)
   { name: "ณัฐกฤตา อัญชิสาชนิภา", position: "Collection HOD", department: "Collection" },
   { name: "ชลธิรา ลาตเวร", position: "Ward 7A HOD", department: "Ward 7A" },
   { name: "วพีร์ ขันธจีรวัฒน์", position: "Orthopedic Surgery HOD", department: "Orthopedic Surgery" },
-  { name: "ไตรภพ คำวิเศษณ์", position: "Facility Management HOD", department: "Facility Management" },
+  { name: "พรศิริ ลิ่มวัฒนวงศ์", position: "IC HOD", department: "Infection Control" }, // Swapped from index 15 (W16) to index 19 (W20)
   { name: "ณัฐวุฒิ หนูหมื่น", position: "HRD HOD", department: "Human Resources Development" },
   { name: "ไอลดา บุณโยดม", position: "Overseas Marketing HOD", department: "Overseas Marketing" },
-  { name: "รัฐกร คงสมกัน", position: "Physical Therapy HOD", department: "Physical Therapy" },
+  { name: "พงศ์วรัท แซ่เจี่ย", position: "Customer Services HOD", department: "Customer Services" }, // Swapped from index 13 (W14) to index 22 (W23)
   { name: "วีรวัฒน์ ดนตรีเจริญ", position: "Multimedia Marketing HOD", department: "Creative Multimedia" },
   { name: "ชนัญชิดา เกลี้ยงเกลา", position: "Digital & Social Media MKT HOD", department: "Digital Marketing" },
-  { name: "ชญธร ปกแก้วลิพร", position: "Strategic Management HOD", department: "Strategic Management" },
-  { name: "ญาณะภัทร จารุธนสารกุล", position: "Facility Management Specialist", department: "Facility Management" }
+  { name: "สุภาวดี สังข์ทอง", position: "ICU HOD", department: "Intensive Care Unit" }, // Swapped from GENERAL_HODS[3] (W31) to W26 position
+  { name: "อมรรัตน์ วิเศษสิงห์", position: "Colorectal HOD", department: "Colorectal Disease Institute" } // Swapped from GENERAL_HODS[2] (W30) to W27 position
 ];
 
 // HODs (Co-lead Team) - General Pool
 export const GENERAL_HODS: Employee[] = [
   { name: "พุทธชาด วรธรรมาภรณ์", position: "Outreach Clinic HOD", department: "Outreach Clinic" },
   { name: "ศรีสุดา เชิงสุวรรณวงศ์", position: "BDMS Wellness Clinic Laguna HOD", department: "BDMS Wellness Clinic Laguna" },
-  { name: "อมรรัตน์ วิเศษสิงห์", position: "Colorectal HOD", department: "Colorectal Disease Institute" },
-  { name: "สุภาวดี สังข์ทอง", position: "ICU HOD", department: "Intensive Care Unit" },
+  { name: "ญาณะภัทร จารุธนสารกุล", position: "Facility Management Specialist", department: "Facility Management" }, // Swapped from PRIORITY_HODS[26] (W27) to W30 position
+  { name: "ชญธร ปกแก้วลิพร", position: "Strategic Management HOD", department: "Strategic Management" }, // Swapped from PRIORITY_HODS[25] (W26) to W31 position
   { name: "วาสนา พูลภิรมย์", position: "OR HOD", department: "Operating Room" },
   { name: "เสาวลักษณ์ อุทัชกุล", position: "Ward 5B HOD", department: "Ward 5B" },
   { name: "มยุรี ขุนมี", position: "GI & Liver HOD", department: "Gastroenterology" },
@@ -95,9 +94,9 @@ export const GENERAL_HODS: Employee[] = [
   { name: "กนกพร บุญรอด", position: "Medical Record HOD", department: "Medical Record" },
   { name: "จุฬาลักษณ์ ติวรานุสรณ์", position: "Sales Referral HOD", department: "Referral Marketing" },
   { name: "นิภารัตน์ บัวทองคำ", position: "Neurology HOD", department: "Neurology" },
-  { name: "สุพรรณี ปรีดาศักดิ์", position: "IMCU & Ward 6B HOD", department: "Intermediate Intensive Care" },
+  { name: "รวิพรรณ คชวงศ์", position: "Ward 7B HOD", department: "Ward 7B" }, // Swapped from index 21 (W49) to index 19 (W47)
   { name: "พรชนก ทองตัน", position: "Price Estimation&Admission HOD", department: "Admission" },
-  { name: "รวิพรรณ คชวงศ์", position: "Ward 7B HOD", department: "Ward 7B" },
+  { name: "สุพรรณี ปรีดาศักดิ์", position: "IMCU & Ward 6B HOD", department: "Intermediate Intensive Care" }, // Swapped from index 19 (W47) to index 21 (W49)
   { name: "ภาวิตา วิภวกานต์", position: "Pediatrics HOD", department: "Pediatrics" },
   { name: "กัลยาณี เคทอง", position: "Eye & Bright View HOD", department: "Eye Center" },
   { name: "เอกศิษย์ หนูนาค", position: "Patient Escort HOD", department: "Patient Escort" },
