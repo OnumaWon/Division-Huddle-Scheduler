@@ -10,6 +10,7 @@ import { WeeklySchedule, Employee, Holiday } from '../types';
 
 /**
  * Generates the Division Huddle schedule from Feb 2026 to Jan 2027.
+ * Applies specific manual overrides for leads and swaps for co-leads as requested.
  */
 export const generateSchedule = (): WeeklySchedule[] => {
   const schedules: WeeklySchedule[] = [];
@@ -26,17 +27,54 @@ export const generateSchedule = (): WeeklySchedule[] => {
   let weekIndex = 0;
   
   while (currentMonday <= endDate) {
-    // Lead Team (Managers) Cycle
-    const lead = managersPool[weekIndex % managersPool.length];
+    const weekNumber = weekIndex + 1;
     
-    // Co-lead Team (HODs) Cycle
-    const coLead = hodsPool[weekIndex % hodsPool.length];
+    // 1. LEAD ASSIGNMENT (Manager)
+    let lead = managersPool[weekIndex % managersPool.length];
     
-    // Calculate Friday of the same week
+    /**
+     * Lead Overrides:
+     * W2 Lead: สุพรรณิการ์ พูนธนานิวัฒน์กุล
+     * W4 Lead: ปฏิพัทธฬ์ ประเสริฐวิทยากิจ
+     * W36 Lead: ราตรี แซ่ตัน
+     * W38 Lead: นิติพงศ์ รักมาก
+     */
+    if (weekNumber === 2) {
+      const override = managersPool.find(m => m.name.includes("สุพรรณิการ์ พูนธนานิวัฒน์กุล"));
+      if (override) lead = override;
+    } else if (weekNumber === 4) {
+      const override = managersPool.find(m => m.name.includes("ปฏิพัทธฬ์ ประเสริฐวิทยากิจ"));
+      if (override) lead = override;
+    } else if (weekNumber === 36) {
+      const override = managersPool.find(m => m.name.includes("ราตรี แซ่ตัน"));
+      if (override) lead = override;
+    } else if (weekNumber === 38) {
+      const override = managersPool.find(m => m.name.includes("นิติพงศ์ รักมาก"));
+      if (override) lead = override;
+    }
+    
+    // 2. CO-LEAD ASSIGNMENT (HOD)
+    let coLead = hodsPool[weekIndex % hodsPool.length];
+    
+    /**
+     * Co-Lead Overrides (Swaps):
+     * W42 <-> W45
+     * W51 <-> W52
+     */
+    if (weekNumber === 42) {
+      coLead = hodsPool[(45 - 1) % hodsPool.length];
+    } else if (weekNumber === 45) {
+      coLead = hodsPool[(42 - 1) % hodsPool.length];
+    } else if (weekNumber === 51) {
+      coLead = hodsPool[(52 - 1) % hodsPool.length];
+    } else if (weekNumber === 52) {
+      coLead = hodsPool[(51 - 1) % hodsPool.length];
+    }
+    
+    // 3. DATE AND HOLIDAY CALCULATIONS
     const currentFriday = new Date(currentMonday);
     currentFriday.setDate(currentMonday.getDate() + 4);
     
-    // Determine working days and find holidays within this week
     const workingDays: string[] = [];
     const holidaysInWeek: Holiday[] = [];
     
@@ -54,7 +92,7 @@ export const generateSchedule = (): WeeklySchedule[] => {
     }
     
     schedules.push({
-      weekNumber: weekIndex + 1,
+      weekNumber,
       startDate: currentMonday.toISOString().split('T')[0],
       endDate: currentFriday.toISOString().split('T')[0],
       lead,
