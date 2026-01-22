@@ -24,5 +24,6 @@ export enum ViewType {
   CALENDAR = 'CALENDAR',
   LIST = 'LIST',
   DASHBOARD = 'DASHBOARD',
-  SWAP = 'SWAP'
+  SWAP = 'SWAP',
+  HOLIDAYS = 'HOLIDAYS'
 }
